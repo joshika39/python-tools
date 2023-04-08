@@ -12,8 +12,14 @@ comp1_s = get_complementer(o_hsv, 150, -0.07, -0.3)
 comp2 = get_complementer(o_hsv, 210, 0, 0)
 comp2_s = get_complementer(o_hsv, 210, -0.07, -0.3)
 
-print_colors(get_accents(rgb_to_hsv(rgb)))
+print_colors(get_accents(rgb_to_hsv(rgb))[1])
+
 get_css_format(get_accents(rgb_to_hsv(rgb))[1], "primary")
+get_complementer_css_format(hsv_to_rgb(comp1), "accent-1")
+get_complementer_css_format(hsv_to_rgb(comp1_s), "accent-1-2")
+get_complementer_css_format(hsv_to_rgb(comp2), "accent-2")
+get_complementer_css_format(hsv_to_rgb(comp2_s), "accent-2-2")
+
 # print_colors(modify_angle(rgb_to_hsv(rgb), 5))
 # print_colors(modify_angle(rgb_to_hsv(rgb), 55))
 # print_colors(modify_angle(rgb_to_hsv(rgb), 100))

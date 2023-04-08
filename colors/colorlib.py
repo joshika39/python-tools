@@ -86,14 +86,16 @@ def get_accents(base_color: tuple[float, float, float]) -> tuple[
     _hsv_colors[4] = base_color
     for i in range(0, 9):
         if i < 5:
-            if _hsv_colors[i] is None:
-                _hsv_colors[i] = [base_color[0], 0.2 + (abs(base_color[1] - 0.2) / 5) * (i + 1),
-                                  1 - (abs(base_color[2] - 1) / 5) * (i + 1)]
+            if _hsv_colors[i] == (0, 0, 0):
+                _hsv_colors[i] = (
+                                  base_color[0], 
+                                  0.2 + (abs(base_color[1] - 0.2) / 5) * (i + 1),
+                                  1 - (abs(base_color[2] - 1) / 5) * (i + 1))
         else:
-            if _hsv_colors[-abs(i - 4)] is None:
-                _hsv_colors[-abs(i - 4)] = [base_color[0], 1 - (abs(base_color[1] - 1) / 4) * abs(i - 5),
-                                            0.4 + (abs(base_color[2] - 0.4) / 4) * (i - 5)]
-    _rgb_colors = [hsv_to_rgb(rgb_t) for rgb_t in _hsv_colors if rgb_t is not None]
+            if _hsv_colors[-abs(i - 4)] == (0, 0, 0):
+                _hsv_colors[-abs(i - 4)] = (base_color[0], 1 - (abs(base_color[1] - 1) / 4) * abs(i - 5),
+                                            0.4 + (abs(base_color[2] - 0.4) / 4) * (i - 5))
+    _rgb_colors = [hsv_to_rgb(rgb_t) for rgb_t in _hsv_colors if rgb_t != (0, 0, 0)]
 
     return _hsv_colors, _rgb_colors
 
@@ -128,10 +130,16 @@ def get_complementer(hsv: tuple[float, float, float], hue_diff: float, saturatio
     return ((h + hue_diff) % 360, s + saturation_diff, v + value_diff)
 
 
-def get_css_format(list_of_colors: tuple[int, int, int], var_name: str) -> list[str]:
+def get_css_format(list_of_colors: list[tuple[int, int, int]], var_name: str) -> list[str]:
     str_list = []
     for i, c in enumerate(list_of_colors):
-        color_str = f'--{var_name}-{i + 1}: {rgb_to_hex(c)}'
+        color_str = f'--{var_name}-{i + 1}: #{rgb_to_hex(c)};'
         str_list.append(color_str)
         print(color_str)
     return str_list
+
+
+def get_complementer_css_format(color: tuple[int, int, int], var_name: str) -> str:
+    color_str = f'--{var_name}: #{rgb_to_hex(color)};'
+    print(color_str)
+    return color_str
