@@ -1,5 +1,7 @@
 from selenium import webdriver
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
@@ -12,6 +14,7 @@ from json_service import JsonService
 from base import curr_dir
 import os
 import subprocess
+import time
 
 
 def get_basic_login() -> list[str]:
@@ -32,7 +35,7 @@ def search_element(driver: WebDriver, by: By, id: str):
         return None
 
 
-def search_elements_by_xpath(driver: WebDriver, tag: str, attribute: str, value: str):
+def search_elements_by_xpath(driver: WebDriver, tag: str, attribute: str, value: str) -> list[WebElement]:
     try:
         results = WebDriverWait(driver, 10).until(expected_conditions.presence_of_all_elements_located((By.XPATH, f"//{tag}[@{attribute}='{value}']")))
         return results
@@ -134,30 +137,46 @@ def login(start_url: str, driver_options=Options()) -> WebDriver:
 
 
 def send_message(driver: WebDriver, target_id: str,message: str):
+    sent = False
+    tries = 4
     driver.get(f'https://www.facebook.com/messages/t/{target_id}')
     messageBox = get_text_box(driver)
-    messageBox.send_keys(message)
-    sendButton = get_send_button(driver)
-    sendButton.click()
+    try:
+        messageBox.send_keys(message)
+    except Exception as e:
+        print(f"Could not enter message: {e}")
+    while not sent and tries >= 0:
+        try:
+            sendButton = get_send_button(driver)
+            sendButton.click()
+            sent = True
+            print(f"Message sent to: {target_id}")
+        except Exception as e:
+            print(f"Could not enter message: {e}")
+        finally:
+            tries -= 1
 
 
-def get_unread_chats(driver: WebDriver) -> list[WebElement]:
-    
+def get_unread_chats(driver: WebDriver) -> dict:
+    chats_str = "xurb0ha x1sxyh0 x1n2onr6" 
     chat_box = search_elements_by_class(driver, "x78zum5 xdt5ytf x1iyjqo2 x5yr21d x6ikm8r x10wlt62")[0]
-    chat_box.location_once_scrolled_into_view
-
-    chats = search_elements_by_class(driver, "x1i10hfl x1qjc9v5 xjbqb8w xjqpnuy xa49m3k xqeqjp1 x2hbi6w x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xdl72j9 x2lah0s xe8uvvx x2lwn1j xeuugli x1n2onr6 x16tdsg8 x1hl2dhg xggy1nq x1ja2u2z x1t137rt x1q0g3np x87ps6o x1lku1pv x1a2a7pz x1lq5wgf xgqcy7u x30kzoy x9jhf4c x1lliihq xdj266r x11i5rnm xat24cr x1mh8g0r x1y1aw1k x1sxyh0 xwib8y2 xurb0ha")
+    chats = search_elements_by_class(driver, chats_str)
     print(f"You have {len(chats)} ongoing conversation")
     
-    
-    # driver.execute_script("arguments[0].scrollIntoView();", chats[-1])
 
-    unread_chats = []  #type: list[WebElement]
+    unread_users = {}  #type: dict
     json_serice = JsonService(users_path)
     registered_users = json_serice.read("users")
-    for chat in chats:
+    whitelisted = json_serice.read("whitelist")
+    i = 0
+    while i < len(chats):
+        success = False
+        chat = chats[i]
         try:
-            full_link = chat.get_attribute("href")
+            if not chat.is_displayed():
+                driver.execute_script("document.querySelector(div[class='x78zum5 xdt5ytf x1iyjqo2 x5yr21d x6ikm8r x10wlt62']).scrollTop=500")
+            link_elem = search_child_elements_by_xpath(chat, 'a', 'role', 'link')[0]
+            full_link = link_elem.get_attribute("href")
             id = full_link.replace('https://www.facebook.com/messages/t/', '')[:-1]
             if id not in registered_users:
                 is_person = chat_is_profile(driver, id)
@@ -170,60 +189,78 @@ def get_unread_chats(driver: WebDriver) -> list[WebElement]:
             else:
                 user = registered_users[id]
             
-            child = chat.find_elements(By.XPATH, ".//div[@aria-label='Mark as read']")
-            if len(child) > 0:
-                unread_chats.append(chat)
-        except:
-            print("Unhandled exception with chat crawling")
+            child = search_child_elements_by_xpath(chat, 'div', 'aria-label', 'Mark as read')
+            if len(child) > 0 and id not in whitelisted:
+                unread_users[id] = user
+            success = True
+        except StaleElementReferenceException as e:
+            print("Refreshing chats....")
+            chats = search_elements_by_class(driver, chats_str)
+            success = False
+        except Exception as e:
+            print(f"Unhandled exception with chat crawling: {e}")
+        finally:
+            if success:
+                i += 1
     json_serice.write("users", registered_users)
-
-    for chat in chats[-8:]:
-        hover = ActionChains(driver).move_to_element(chat)
-        hover.perform()
-        context_menu = search_child_elements_by_xpath(chat, "div", "aria-label", "Menu")
-        context_menu[0].click()
-        menu_items = search_elements_by_class(driver, "x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou xe8uvvx x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x87ps6o x1lku1pv x1a2a7pz xjyslct x9f619 x1ypdohk x78zum5 x1q0g3np x2lah0s xnqzcj9 x1gh759c xdj266r xat24cr x1344otq x1de53dj x1n2onr6 x16tdsg8 x1ja2u2z x6s0dn4 x1y1aw1k xwib8y2")
-        if len(menu_items) > 5:
-            menu_items[6].click()
-        # input("check the browser")
-    # if len(chats) > 10:
-    #     chats_to_clear = len(chats) - 10
-    #     targets = chats[-chats_to_clear:]
-    #     for target in targets:
-    #         hover = ActionChains(driver).move_to_element(target)
-    #         hover.perform()
-    #         input("check the browser")
-
-    return unread_chats
+    
+    if len(chats) > 10:
+        success = False
+        old_chats = chats[-10:]
+        i = 0
+        while i < len(old_chats) and len(chats) > 10:
+            chat = old_chats[-1]
+            try:
+                hover = ActionChains(driver).move_to_element(chat)
+                hover.perform()
+                context_menu = search_child_elements_by_xpath(chat, "div", "aria-label", "Menu")
+                if len(context_menu) > 0:
+                    context_menu[0].click()
+                    menu_items = search_elements_by_class(driver, "x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou xe8uvvx x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x87ps6o x1lku1pv x1a2a7pz xjyslct x9f619 x1ypdohk x78zum5 x1q0g3np x2lah0s xnqzcj9 x1gh759c xdj266r xat24cr x1344otq x1de53dj x1n2onr6 x16tdsg8 x1ja2u2z x6s0dn4 x1y1aw1k xwib8y2")
+                    if len(menu_items) == 9:
+                        menu_items[6].click()
+                    elif len(menu_items) == 8:
+                        menu_items[4].click()
+                    elif len(menu_items) == 3:
+                        menu_items[1].click()
+                else:
+                    print("Context menu not found!")
+            except StaleElementReferenceException as e:
+                chats = search_elements_by_class(driver, chats_str)
+                if len(chats) > 10:
+                    old_chats = chats[-10:]
+                success = False
+            except Exception as e:
+                success = False
+                print(f"Could not open menu: {e}")
+            finally:
+                if success:
+                    i += 1
+    
+    return unread_users
 
 base_url = "https://www.facebook.com/messages/"
-csenge = "100006367207301"
-hanna = "100019317438894"
-me = "100012409636478"
 
-# passTxt = input("enter your password: ")
-# email = "josh.hegedus@outlook.com"
-# twoFa = input("Enter 2fa code: ")
+start = "100006367207301"
 
-browser = login(f'{base_url}t/{me}')
+option = Options()
 
-# browser = webdriver.Remote('http://localhost:4444/wd/hub', options=Options())
-# browser.set_window_size(1500, 900)
+option.add_argument("--disable-infobars")
+option.add_argument("start-maximized")
+option.add_argument("--disable-extensions")
 
-get_unread_chats(browser)
+# Pass the argument 1 to allow and 2 to block
+option.add_experimental_option(
+    "prefs", {"profile.default_content_setting_values.notifications": 2}
+)
 
-# send_message(browser, csenge, "Test Msg")
-# send_message(browser, hanna, "Test Msg")
-
-finish = input("Enter anything to exit...")
+browser = login(f'{base_url}t/{start}', option)
 
 
-# unread_msg = search_elements_by_xpath(browser, "div", "aria-label", "Mark as read")
-# try:
-#     unread_msg = WebDriverWait(browser, 10).until(
-#         expected_conditions.presence_of_all_elements_located((By.XPATH, "//div[@aria-label='Mark as read']")))
-# except:
-#     print(f"You have 0 unread messages.")
-    
-# print(f"You have {len(unread_msg)} unread messages.")
-# print(f"You have {len(chats)} ongoing conversation")
+unreads = get_unread_chats(browser)
+print(f"You had {len(unreads)} messages")
+for unread in unreads:
+    if unreads[unread]['type'] == 'person':
+        send_message(browser, unread, "Naah maaan, it's late now, I'll reach out to you tomorrow, sorry. (Sent by an automated replier system.)")
+
+time.sleep(15)
