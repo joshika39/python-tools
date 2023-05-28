@@ -90,9 +90,17 @@ def login(start_url: str, driver_options=Options()) -> WebDriver:
     
     return driver
 
+
+def send_message(driver: WebDriver, target_id: str,message: str):
+    driver.get(f'https://www.facebook.com/messages/t/{target_id}')
+    messageBox = get_text_box(driver)
+    messageBox.send_keys(message)
+
+    sendButton = search_element(driver, "div", "aria-label", "Press enter to send")
+    sendButton.click()
+
 base_url = "https://www.facebook.com/messages/"
 csenge = "100006367207301"
-
 
 # passTxt = input("enter your password: ")
 # email = "josh.hegedus@outlook.com"
@@ -108,12 +116,6 @@ browser = login(f'{base_url}t/{csenge}')
 
 # browser = webdriver.Remote('http://localhost:4444/wd/hub', options=Options())
 # browser.set_window_size(1500, 900)
-
-# message = get_text_box()
-# message.send_keys("Test Msg")
-
-# sendButton = search_element("div", "aria-label", "Press enter to send")
-# sendButton.click()
 
 unread_msg = search_elements_by_xpath(browser, "div", "aria-label", "Mark as read")
 
@@ -144,5 +146,7 @@ for chat in chats:
             print(f'{full_link} -> Group (undefined)')
     except:
         print("Unhandled exception with chat crawling")
+
+
 
 finish = input("Enter anything to exit...")
