@@ -15,12 +15,14 @@ from base import curr_dir
 import os
 import subprocess
 import time
-
+from pyperclip import copy
 msg_hu_list = [
     'Hello,',
     ' ',
-    'Az üzeneted rögzítette Johshuának az autómatikus üzenet kezelője. Azért kaptad az üzenetet, mert még 5 óra előtt van, és Joshua még munkán van. Érkezni fog válasz az üzenetedre.'
-    'Köszönöm szépen a megértésed, addig is, további szép napot.',
+    'Ezt az üzenetet egy automatikus üzenetrögzítő írja. '
+    'Joshua 5 után lesz elérhető, megértésed köszöni. ',
+    ' ',
+    'Addig is, további szép napot! ',
     ' ',
     'English language switch is under development.',
     ' ',
@@ -51,8 +53,9 @@ Joshua majd 6 utan, tud valaszolni, koszonom a megertesed.
 (Sent by an automated replier system.)
 Version: 024723094897jsfw3r-08v923h932
 """
+users_path = os.path.join(curr_dir(), 'users.json')
 
-base_url = "https://www.facebook.com/messages/t/100006367207301"
+base_url = f"https://www.facebook.com/messages/t/{JsonService(users_path).read('people/csenge')}"
 
 
 def get_basic_login() -> list[str]:
@@ -64,7 +67,6 @@ def get_totp() -> str:
     return subprocess.run(['bw', 'get', 'totp', 'f6280c44-154b-46f8-9e08-ad3b00c739da'], stdout=subprocess.PIPE).stdout.decode("utf-8")
 
 
-users_path = os.path.join(curr_dir(), 'users.json')
 
 def search_element(driver: WebDriver, by: By, id: str):
     try:
@@ -162,23 +164,17 @@ def send_message(driver: WebDriver, target_id: str, messages: list[str]):
     sent = False
     tries = 4
     driver.get(f'https://www.facebook.com/messages/t/{target_id}')
-    messageBox = search_elements_by_xpath(driver, "div", "aria-label", "Message")
+    messageBox = search_elements_by_class(driver, "xat24cr xdj266r", "p")
     if len(messageBox) <= 0:
         print("Could get message box")
         return
-    
+    messageBox = messageBox[0]
     while not sent and tries >= 0:
         try:
             sent = True
             for message in messages:
-                messageBox[0].send_keys(message)
-                messageBox[0].send_keys(Keys.SHIFT + Keys.ENTER)
-            # sendButton = search_elements_by_xpath(driver, "div", "aria-label", "Press enter to send")
-            # if len(sendButton) <= 0:
-            #     print("Could get send button")
-            #     return
-            # sendButton[0].click()
-            messageBox[0].send_keys(Keys.ENTER)
+                messageBox.send_keys(message + Keys.SHIFT + Keys.ENTER)
+            messageBox.send_keys(Keys.ENTER)
             print(f"Message sent to: {target_id}")
         except Exception as e:
             sent = False
@@ -194,8 +190,8 @@ def get_unread_chats(driver: WebDriver) -> dict:
 
     unread_users = {}  #type: dict
     json_serice = JsonService(users_path)
-    registered_users = json_serice.read("users")
-    whitelisted = json_serice.read("whitelist")
+    registered_users = json_serice.read("conversations")
+    testers = json_serice.read("beta_testers")
     i = 0
     while i < len(chats):
         success = False
@@ -218,7 +214,7 @@ def get_unread_chats(driver: WebDriver) -> dict:
                 user = registered_users[id]
             
             child = search_child_elements_by_xpath(chat, 'div', 'aria-label', 'Mark as read')
-            if len(child) > 0 and id not in whitelisted:
+            if len(child) > 0 and id in testers:
                 unread_users[id] = user
             success = True
         except StaleElementReferenceException as e:
@@ -230,7 +226,7 @@ def get_unread_chats(driver: WebDriver) -> dict:
         finally:
             if success:
                 i += 1
-    json_serice.write("users", registered_users)
+    json_serice.write("conversations", registered_users)
     
     if len(chats) > 10:
         success = False
