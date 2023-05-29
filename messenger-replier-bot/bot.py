@@ -16,6 +16,44 @@ import os
 import subprocess
 import time
 
+msg_hu_list = [
+    'Hello,',
+    ' ',
+    'Az üzeneted rögzítette Johshuának az autómatikus üzenet kezelője. Azért kaptad az üzenetet, mert még 5 óra előtt van, és Joshua még munkán van. Érkezni fog válasz az üzenetedre.'
+    'Köszönöm szépen a megértésed, addig is, további szép napot.',
+    ' ',
+    'English language switch is under development.',
+    ' ',
+    '-----BEGIN PGP PUBLIC KEY BLOCK-----',
+    'mDMEZHSC/hYJKwYBBAHaRw8BAQdAQ4D+KzJ95Uk4qIEZMra8irFm9ekzzdExhb1c',
+    'pvWjmPC0JEpvc2h1YSBIZWdlZHVzIDxqaGVnZWR1czlAZ21haWwuY29tPoiZBBMW',
+    'CgBBFiEEiEMkR44cIFZNVs/KWBFXYvv8AsoFAmR0gv4CGwMFCQPCZwAFCwkIBwIC',
+    'IgIGFQoJCAsCBBYCAwECHgcCF4AACgkQWBFXYvv8AsqyewEApzgWXRkKl6BPHf+/',
+    'e3xQthB6d0Oq/hMaYT/zjLvPS7oA/11OkDCKR5TnVSbeLOH4fBpbhMhaDpFaBU0R',
+    'lM1OVyIJuDgEZHSC/hIKKwYBBAGXVQEFAQEHQP2lrIHopA9i+nh62HKwGE23M7nD',
+    'eJSbSruDl7q+k81ZAwEIB4h+BBgWCgAmFiEEiEMkR44cIFZNVs/KWBFXYvv8AsoF',
+    'AmR0gv4CGwwFCQPCZwAACgkQWBFXYvv8AsrDngD+M0L4XtxUJS8xxFrxLyjDs11o',
+    'gk5AoErQs1lz8qagDYwBAJK7jVQ5MzPYRZQ6BhnDFq0W2pZA0MMU32fVjvehbVcB',
+    '=nZLD',
+    '-----END PGP PUBLIC KEY BLOCK-----',
+    ' ',
+    '(Sent by an automated replier system.)',
+    'Version: v0.0.1-alpha'
+]
+
+msg_en = """
+Hello, 
+
+Ez a joshuanaka az automatikus uzenet kezeloje.
+
+Joshua majd 6 utan, tud valaszolni, koszonom a megertesed.
+
+(Sent by an automated replier system.)
+Version: 024723094897jsfw3r-08v923h932
+"""
+
+base_url = "https://www.facebook.com/messages/t/100006367207301"
+
 
 def get_basic_login() -> list[str]:
     email = subprocess.run(['bw', 'get', 'username', 'f6280c44-154b-46f8-9e08-ad3b00c739da'], stdout=subprocess.PIPE).stdout.decode("utf-8") 
@@ -72,22 +110,6 @@ def click_button(driver: WebDriver, attribute: str, value: str):
             button.click()
 
 
-def get_text_box(driver: WebDriver):
-    msgDivs = search_elements_by_xpath(driver, "div", "aria-label", "Message")
-
-    while len(msgDivs) == 0:
-        msgDivs = search_elements_by_xpath(driver, "div", "aria-label", "Message")
-    
-    return msgDivs[0]
-
-def get_send_button(driver: WebDriver):
-    btn = search_elements_by_xpath(driver, "div", "aria-label", "Press enter to send")
-    while len(btn) == 0:
-        btn = search_elements_by_xpath(driver, "div", "aria-label", "Press enter to send")
-    
-    return btn[0]
-
-
 def chat_is_profile(driver: WebDriver, chat_id: str) -> bool:
     driver.execute_script("window.open('');")
     driver.switch_to.window(driver.window_handles[1])
@@ -136,33 +158,39 @@ def login(start_url: str, driver_options=Options()) -> WebDriver:
     return driver
 
 
-def send_message(driver: WebDriver, target_id: str,message: str):
+def send_message(driver: WebDriver, target_id: str, messages: list[str]):
     sent = False
     tries = 4
     driver.get(f'https://www.facebook.com/messages/t/{target_id}')
-    messageBox = get_text_box(driver)
-    try:
-        messageBox.send_keys(message)
-    except Exception as e:
-        print(f"Could not enter message: {e}")
+    messageBox = search_elements_by_xpath(driver, "div", "aria-label", "Message")
+    if len(messageBox) <= 0:
+        print("Could get message box")
+        return
+    
     while not sent and tries >= 0:
         try:
-            sendButton = get_send_button(driver)
-            sendButton.click()
             sent = True
+            for message in messages:
+                messageBox[0].send_keys(message)
+                messageBox[0].send_keys(Keys.SHIFT + Keys.ENTER)
+            # sendButton = search_elements_by_xpath(driver, "div", "aria-label", "Press enter to send")
+            # if len(sendButton) <= 0:
+            #     print("Could get send button")
+            #     return
+            # sendButton[0].click()
+            messageBox[0].send_keys(Keys.ENTER)
             print(f"Message sent to: {target_id}")
         except Exception as e:
+            sent = False
             print(f"Could not enter message: {e}")
         finally:
-            tries -= 1
+                tries -= 1
+    driver.get(base_url)
 
 
 def get_unread_chats(driver: WebDriver) -> dict:
     chats_str = "xurb0ha x1sxyh0 x1n2onr6" 
-    chat_box = search_elements_by_class(driver, "x78zum5 xdt5ytf x1iyjqo2 x5yr21d x6ikm8r x10wlt62")[0]
     chats = search_elements_by_class(driver, chats_str)
-    print(f"You have {len(chats)} ongoing conversation")
-    
 
     unread_users = {}  #type: dict
     json_serice = JsonService(users_path)
@@ -239,9 +267,19 @@ def get_unread_chats(driver: WebDriver) -> dict:
     
     return unread_users
 
-base_url = "https://www.facebook.com/messages/"
 
-start = "100006367207301"
+def get_nth_msg(driver: WebDriver, target: str, count: int):
+    driver.get(f'https://www.facebook.com/messages/t/{target}')
+    messages = search_elements_by_class(driver, "x6prxxf x1fc57z9 x1yc453h x126k92a xzsf02u", tag='div')
+    # for message in messages:
+    #     print(message.text)
+    if len(messages) > 0 and messages[-1] == "en":
+        send_message(driver, target, )
+
+
+
+
+start = ""
 
 option = Options()
 
@@ -254,13 +292,16 @@ option.add_experimental_option(
     "prefs", {"profile.default_content_setting_values.notifications": 2}
 )
 
-browser = login(f'{base_url}t/{start}', option)
+browser = login(base_url, option)
 
+# get_nth_msg(browser, "100015000309137", 3)
 
-unreads = get_unread_chats(browser)
-print(f"You had {len(unreads)} messages")
-for unread in unreads:
-    if unreads[unread]['type'] == 'person':
-        send_message(browser, unread, "Naah maaan, it's late now, I'll reach out to you tomorrow, sorry. (Sent by an automated replier system.)")
-
-time.sleep(15)
+while True:
+    time.sleep(2)
+    unreads = get_unread_chats(browser)
+    print(f"Current chages: {len(unreads)}")
+    if len(unreads) > 0:
+        for unread in unreads:
+            if unreads[unread]['type'] == 'person':
+                # print(f"Unread: {unread}")
+                send_message(browser, unread, msg_hu_list)
