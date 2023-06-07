@@ -6,14 +6,17 @@ from constants import MSG_BOX, MESSAGE
 from datetime import datetime, date
 
 class Conversation():
-    def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
+    def __init__(self, service: JsonService, driver: WebDriver, home_url: str, is_open: bool, id: str) -> None:
         self.service = service
         self.id = id
         self.home_url = home_url 
         self.driver = driver
         self.last_message = self.service.read(f"{id}/last_message")  #type: str
         self.full_url = f'https://www.facebook.com/messages/t/{self.id}'
-        self.keep_open = False
+        if is_open is None:
+            self.keep_open = False
+        else:
+            self.keep_open = is_open
 
     def goto_chat(self):
         if self.driver.current_url != self.full_url:
@@ -58,11 +61,12 @@ class Conversation():
         pass
 
     def save(self):
-        self.service.write(f"conversations/{id}", self.json_format())
+        json_obj = self.json_format()
+        self.service.write(f"conversations/{self.id}", json_obj)
 
 class User(Conversation):
-    def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
-        super().__init__(service, driver, home_url, id)
+    def __init__(self, service: JsonService, driver: WebDriver, home_url: str, is_open: bool, id: str) -> None:
+        super().__init__(service, driver, home_url, is_open, id)
 
     def reply(self, messages: list[str]) -> bool:
         curr_time = date.today()
@@ -79,8 +83,8 @@ class User(Conversation):
         return {"type" : "person", "last_message" : self.last_message, "keep_open" : self.keep_open}
     
 class Group(Conversation):
-    def __init__(self, service: JsonService, driver: WebDriver, home_url: str,  id: str) -> None:
-        super().__init__(service, driver, home_url, id)
+    def __init__(self, service: JsonService, driver: WebDriver, home_url: str, is_open: bool, id: str) -> None:
+        super().__init__(service, driver, home_url, is_open, id)
 
     def reply(self, messages: list[str]) -> bool:
         curr_time = date.today()
@@ -100,27 +104,40 @@ class ConversationFactory():
     def __init__(self, service: JsonService, fallback_url: str) -> None:
         self.fallback_url = fallback_url
         self.service = service
-        self.registered_users = service.read("conversations")
+        self.conversations = service.read("conversations")
 
-    def create_chat(self, driver: WebDriver, id: str) -> Conversation:
-        pass
+    def create_conversations(self, driver: WebDriver) -> list[Conversation]:
+        return_list = []  #type: list[Conversation]
+        for conversation_id in self.conversations:
+            conversation = self.service.read(f"conversations/{conversation_id}")
+            is_open = False
+            if "keep_open" in conversation.keys():
+                is_open = conversation["keep_open"]
+
+            match conversation["type"]:
+                case "group":
+                    return_list.append(Group(self.service, driver, self.fallback_url, is_open, conversation_id))
+                case "person":
+                    return_list.append(User(self.service, driver, self.fallback_url, is_open, conversation_id))
+                    
+        return return_list
     
     def create_user(self, driver: WebDriver, id: str) -> Conversation:
-        if id not in self.registered_users:
+        if id not in self.conversations:
             user = {
                 "type" : "person",
                 "last_message": ""
             }
-            self.registered_users[id] = user
+            self.conversations[id] = user
             self.service.write(f"conversations/{id}", user) 
         return User(self.service, driver, self.fallback_url, id)
 
     def create_group(self, driver: WebDriver, id: str) -> Conversation:
-        if id not in self.registered_users:
+        if id not in self.conversations:
             user = {
                 "type" : "group",
                 "last_message": ""
             }
-            self.registered_users[id] = user
+            self.conversations[id] = user
             self.service.write(f"conversations/{id}", user) 
         return Group(self.service, driver, self.fallback_url, id)

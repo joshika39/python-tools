@@ -24,9 +24,13 @@ option.add_experimental_option("prefs", {"profile.default_content_setting_values
 # browser = login(base_url, option)
 factory = ConversationFactory(json_service, base_url)
 
+conversations = factory.create_conversations(None)
+
+for c in conversations:
+    c.save()
 # josh = factory.create_user(None, joshua_id)
 # josh.reply(MSG_HU)
-test = factory.create_user(None, "123234345")
+
 # test.reply(TEST_MSG)
 
 # input('Press anything to end...')

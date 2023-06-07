@@ -8,55 +8,88 @@
     "conversations": {
         "2843874362352112": {
             "type": "group",
-            "last_message": "2023-05-29"
+            "last_message": null,
+            "keep_open": false
         },
         "100002207628601": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "100022731858089": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "100009876018162": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "100027540483260": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "100009191056907": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "100027406035879": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "100012409636478": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "100019643763104": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "100015000309137": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "100006367207301": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": true
         },
         "100019317438894": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "100004499802566": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         },
         "4577680678951608": {
-            "type": "group"
+            "type": "group",
+            "last_message": null,
+            "keep_open": false
         },
         "5193071507485660": {
-            "type": "group"
+            "type": "group",
+            "last_message": null,
+            "keep_open": false
         },
         "6767405343275132": {
-            "type": "group"
+            "type": "group",
+            "last_message": null,
+            "keep_open": false
         },
         "100035537291906": {
-            "type": "person"
+            "type": "person",
+            "last_message": null,
+            "keep_open": false
         }
     },
     "whitelist": [
