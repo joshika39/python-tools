@@ -13,6 +13,7 @@ class Conversation():
         self.driver = driver
         self.last_message = self.service.read(f"{id}/last_message")  #type: str
         self.full_url = f'https://www.facebook.com/messages/t/{self.id}'
+        self.keep_open = False
 
     def goto_chat(self):
         if self.driver.current_url != self.full_url:
@@ -53,8 +54,11 @@ class Conversation():
     def reply(self, messages: list[str]):
         pass
 
+    def json_format(self) -> dict:
+        pass
+
     def save(self):
-        self.service.write(f"con")
+        self.service.write(f"conversations/{id}", self.json_format())
 
 class User(Conversation):
     def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
@@ -71,6 +75,9 @@ class User(Conversation):
         
         return self.__reply_base(messages) 
     
+    def json_format(self) -> dict:
+        return {"type" : "person", "last_message" : self.last_message, "keep_open" : self.keep_open}
+    
 class Group(Conversation):
     def __init__(self, service: JsonService, driver: WebDriver, home_url: str,  id: str) -> None:
         super().__init__(service, driver, home_url, id)
@@ -85,6 +92,9 @@ class Group(Conversation):
             self.last_message = curr_time
         
         return self.__reply_base(messages) 
+    
+    def json_format(self) -> dict:
+        return {"type" : "group", "last_message" : self.last_message, "keep_open" : self.keep_open}
 
 class ConversationFactory():
     def __init__(self, service: JsonService, fallback_url: str) -> None:

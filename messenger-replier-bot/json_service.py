@@ -38,28 +38,19 @@ class JsonService():
         if keys[0] in source.keys():
             return self.read_subkey(keys[1:], source[keys[0]])
 
-        return None
+        return None            
 
-    def write_subkey(self, keys: list[str], source: dict, value) -> dict:
-        if len(keys) == 0 or type(source) is not dict:
-            return {}
+    def write(self, path: str, value):
+        keys = path.split('/')
+        result = self._data
 
-        if len(keys) == 1:
-            # if keys[0] in source.keys():s
-            source[keys[0]] = value
-            # else:
-            #     return {keys[0]: value}
+        temp = result
+        for i, key in enumerate(keys[:-1]):
+            if key not in temp:
+                temp[key] = {}
+            temp = temp[key]
 
-        return { keys[0]: self.write_subkey(keys[1:], source, value) }
-
-    def write(self, key: str, value):
-        if '/' in key:
-            # keys = key.split('/')
-            # fst_key = keys[0]
-            self._data = self.write_subkey(key.split('/'), self._data, value)
-            
-        else:
-            self._data[key] = value
+        temp[keys[-1]] = value
 
         with open(self._json_path, "w") as outfile:
             json.dump(self._data, outfile)
