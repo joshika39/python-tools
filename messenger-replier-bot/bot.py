@@ -1,36 +1,44 @@
-from selenium.webdriver.chrome.options import Options
-from json_service import JsonService
+import zmq
+from selection_picker_joshika39 import MenuWrapper, FunctionItem, SingleMenu
+from constants import CLEAR, QUIT
+from jsonlib.json_service import JsonService
 from base import curr_dir
-from selenium_lib import login
-from conversation import ConversationFactory
 import os
-from constants import MSG_HU, TEST_MSG
 
-users_path = os.path.join(curr_dir(), 'users.json')
+def send_msg():
+    p_id = input("Enter the conversation id (leave blank for predefined): ")
+    if p_id == "":
+        users_path = os.path.join(curr_dir(), 'users.json')
+        json_service = JsonService(users_path)
+        people = json_service.read('people')
+        r = SingleMenu("Select a recepient:", [key for key in people.keys()]).show()
+        selected = f"send-{people[r]}"
+        socket.send(selected.encode("utf-8"))
+        message = socket.recv()
+        print(message)
 
-json_service = JsonService(users_path)
+def go_to_homepage():
+    pass
 
-csenge_id = json_service.read('people/csenge')
-joshua_id = json_service.read('people/joshua')
+def clear_logs():
+    socket.send(CLEAR)
+    message = socket.recv()
+    print(message)
 
-base_url = f"https://www.facebook.com/messages/t/{csenge_id}"
+def exit_server():
+    socket.send(QUIT)
+    message = socket.recv()
+    print(message)
+    exit(0)
 
-option = Options()
-option.add_argument("--disable-infobars")
-option.add_argument("start-maximized")
-option.add_argument("--disable-extensions")
-option.add_experimental_option("prefs", {"profile.default_content_setting_values.notifications": 2})
 
-# browser = login(base_url, option)
-factory = ConversationFactory(json_service, base_url)
+context = zmq.Context()
+socket = context.socket(zmq.REQ)
+socket.connect("tcp://100.90.226.33:5555")
 
-conversations = factory.create_conversations(None)
-
-for c in conversations:
-    c.save()
-# josh = factory.create_user(None, joshua_id)
-# josh.reply(MSG_HU)
-
-# test.reply(TEST_MSG)
-
-# input('Press anything to end...')
+while True:
+    MenuWrapper("Select a task:", [
+        FunctionItem("Send message", send_msg),
+        FunctionItem("Clear the logs", clear_logs),
+        FunctionItem("Quit", exit_server)
+    ]).show()

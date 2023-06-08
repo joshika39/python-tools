@@ -50,3 +50,9 @@ TEST_MSG = [
 ]
 
 MSG_BOX = "xat24cr xdj266r"
+
+CLEAR = b"cls"
+QUIT = b"exit"
+
+SUCCESS = b"success"
+ERROR = b"error"

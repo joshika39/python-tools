@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as expected_condition
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import subprocess
 
 def get_basic_login() -> list[str]:
@@ -78,10 +79,21 @@ def submit_approval(driver: WebDriver):
         except:
             return
 
-def login(start_url: str, driver_options=Options()) -> WebDriver:
-    driver = webdriver.Chrome(options=driver_options)
-    driver.get(start_url)
 
+def create_local(driver_options=Options()) -> WebDriver:
+    return webdriver.Chrome(options=driver_options)
+
+
+def connect_to_container(url: str, driver_options=Options()) -> WebDriver:
+    driver = webdriver.Remote(url, desired_capabilities=DesiredCapabilities.CHROME, options=driver_options)
+    return driver
+
+
+def login(start_url: str, driver: WebDriver, bypass_login=False) -> WebDriver:
+    driver.get(start_url)
+    if bypass_login:
+        return driver
+    
     username = search_element(driver, By.ID, "email")
     if username is None:
         return driver
