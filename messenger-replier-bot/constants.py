@@ -14,6 +14,8 @@ CONTENT_NOT_FOUND = "x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928w
                     "x1cpjm7i x1fgarty x1943h6x xtoi2st x3x7a5m x1603h9y x1u7k74 x1xlr1w8 xi81zsa x2b8uid"
 
 CHAT_NAME = "x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x1f6kntn xvq8zen x1fcty0u xzsf02u x1yc453h"
+UCHAT_NAME = "x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x1f6kntn xvq8zen x1s688f xzsf02u x1yc453h"
+
 MSG_HU = [
     'Hello,',
     ' ',

@@ -2,7 +2,7 @@ from typing import Any
 from conversations.imports import *
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
-from constants import CHATS, CHAT_LINK, READ_MSG, CONTEXT_MENU, MENU_ITEMS
+from constants import CHATS, CHAT_LINK, READ_MSG, CONTEXT_MENU, MENU_ITEMS, CHAT_NAME, UCHAT_NAME
 
 class Conversation():
     def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
@@ -21,8 +21,8 @@ class Conversation():
             success = False
             chat = chats[i]
             try:
-                if not chat.is_displayed():
-                    self.driver.execute_script("document.querySelector(div[class='x78zum5 xdt5ytf x1iyjqo2 x5yr21d x6ikm8r x10wlt62']).scrollTop=500")
+                # if not chat.is_displayed():
+                #     self.driver.execute_script("document.querySelector(div[class='x78zum5 xdt5ytf x1iyjqo2 x5yr21d x6ikm8r x10wlt62']).scrollTop=500")
                 link_elem = search_child_elements_by_xpath(chat, CHAT_LINK)[0]
                 full_link = link_elem.get_attribute("href")
                 id = full_link.replace('https://www.facebook.com/messages/t/', '')[:-1]
@@ -55,7 +55,15 @@ class Conversation():
         self.last_message = self.get_safe_data("last_message")
         self.keep_open = self.get_safe_data("keep_open") == True
         self.refresh_element()
-        self.displayed_name = self.get_safe_data("displayed_name") or ""
+        self.name = self.get_safe_data("name") or ""
+        if self.element is not None and self.name == "":
+            s_text = UCHAT_NAME if self.unread else CHAT_NAME
+            targets = search_child_elements_by_class(self.element, s_text)
+            if len(targets) > 0:
+                self.name = targets[0].text
+            else: 
+                self.name = self.id
+        
 
     def goto_chat(self):
         if self.driver.current_url != self.full_url:
@@ -110,6 +118,9 @@ class Conversation():
             print(f"Could not open menu: {e}")
 
         return False
+
+    def display_str(self) -> str:
+        return self.name
 
     def json_format(self) -> dict:
         pass

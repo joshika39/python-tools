@@ -54,7 +54,7 @@ while True:
     f = conversations.factory.ConversationFactory(json_service, base_url)
     chats = f.get_open_conversations(browser)
     for chat in chats:
-        print(chat.displayed_name)
+        print(chat.display_str())
         chat.save()
 
 # context = zmq.Context()

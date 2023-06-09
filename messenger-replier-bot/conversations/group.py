@@ -5,17 +5,6 @@ from constants import CHAT_NAME
 class Group(Conversation):
     def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
         super().__init__(service, driver, home_url, id)
-        self.__init_details()
-
-    def __init_details(self):
-        if self.displayed_name == "" and self.element is not None:
-            targets = search_child_elements_by_class(self.element, CHAT_NAME)
-            if len(targets) > 0:
-                self.displayed_name = targets[0].text
-            else: 
-                self.displayed_name = f"Group: {self.id} (name not found)"
-        else:
-            self.displayed_name = f"Group: {self.id} (element not found)"
 
     def reply(self, messages: list[str]) -> bool:
         curr_time = date.today()
@@ -25,8 +14,14 @@ class Group(Conversation):
                 messages['Ma mar kaptatok uzenetet', ' ', ' ', 'Peace out ( ´ ▽ ` )ﾉ']
         else:
             self.last_message = curr_time
-        
         return super().reply(messages) 
+    
+    def display_str(self) -> str:
+        name = super().display_str()
+        if self.unread:
+            return f"👥 {name} 🔔"
+        else:
+            return f"👥 {name}"
     
     def archive(self):
         menu =  super().__archive()
@@ -34,4 +29,4 @@ class Group(Conversation):
             menu[4].click()
     
     def json_format(self) -> dict:
-        return {"type" : "group", "last_message" : self.last_message, "keep_open" : self.keep_open, "displayed_name": self.displayed_name}
+        return {"type" : "group", "last_message" : self.last_message, "keep_open" : self.keep_open, "name": self.name}
