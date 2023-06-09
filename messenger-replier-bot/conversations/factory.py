@@ -71,7 +71,7 @@ class ConversationFactory():
         for conversation_id in ids:
             result = None  #type: Conversation
             if conversation_id not in self.conversations:
-                if chat_is_profile(conversation_id):
+                if chat_is_profile(driver, conversation_id):
                     result = Person(self.service, driver, self.fallback_url, conversation_id)
                 else:
                     result = Group(self.service, driver, self.fallback_url, conversation_id)
