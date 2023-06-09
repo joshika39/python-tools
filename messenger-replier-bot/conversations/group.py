@@ -1,9 +1,21 @@
 from conversations.imports import *
 from conversations.conversation import Conversation
+from constants import CHAT_NAME
 
 class Group(Conversation):
-    def __init__(self, service: JsonService, driver: WebDriver, home_url: str, is_open: bool, id: str) -> None:
-        super().__init__(service, driver, home_url, is_open, id)
+    def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
+        super().__init__(service, driver, home_url, id)
+        self.__init_details()
+
+    def __init_details(self):
+        if self.displayed_name == "" and self.element is not None:
+            targets = search_child_elements_by_class(self.element, CHAT_NAME)
+            if len(targets) > 0:
+                self.displayed_name = targets[0].text
+            else: 
+                self.displayed_name = f"Group: {self.id} (name not found)"
+        else:
+            self.displayed_name = f"Group: {self.id} (element not found)"
 
     def reply(self, messages: list[str]) -> bool:
         curr_time = date.today()
@@ -16,5 +28,10 @@ class Group(Conversation):
         
         return super().reply(messages) 
     
+    def archive(self):
+        menu =  super().__archive()
+        if len(menu) == 8:
+            menu[4].click()
+    
     def json_format(self) -> dict:
-        return {"type" : "group", "last_message" : self.last_message, "keep_open" : self.keep_open}
+        return {"type" : "group", "last_message" : self.last_message, "keep_open" : self.keep_open, "displayed_name": self.displayed_name}

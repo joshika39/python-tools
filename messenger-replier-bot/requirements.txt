@@ -1,0 +1,4 @@
+multipledispatch
+windows-curses
+py-getch
+zmq

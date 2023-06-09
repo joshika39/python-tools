@@ -56,6 +56,14 @@ def search_elements_by_class(driver: WebDriver, class_list: str, tag="*") -> lis
         return results
     except:
         return []
+    
+
+def search_child_elements_by_class(parent: WebElement, class_list: str, tag="*") -> list[WebElement]: 
+    try:
+        results = parent.find_elements(By.CSS_SELECTOR, f"{tag}[class='{class_list}']")
+        return results
+    except:
+        return []
 
 
 def search_element_by_id(driver: WebDriver, element_id: str) -> WebElement: 
@@ -111,5 +119,22 @@ def login(start_url: str, driver: WebDriver, bypass_login=False) -> WebDriver:
         submit_approval(driver)
         test.click()
         test = search_element_by_id(driver, "checkpointSubmitButton")
+
+    has_error = search_element_by_id(driver, "back")
+    
+    if has_error is not None:
+        driver.get(start_url)
     
     return driver
+
+
+def get_id_from_link(element: WebElement):
+    try:
+        link = element.get_attribute("href")
+        if "messages/t" in link:
+            return True, link.replace("https://www.facebook.com/messages/t/", "")[:-1]
+        else:
+            return False, ""
+    except Exception: 
+        print(f"error getting the link for: {element.text}")
+        return False, ""

@@ -3,14 +3,16 @@ from jsonlib.json_service import JsonService
 from base import curr_dir
 from selenium_lib import login, connect_to_container, create_local
 from selenium.webdriver.chrome.webdriver import WebDriver
-from conversations.factory import ConversationFactory
+import conversations.factory
 import os
-from constants import MSG_HU, TEST_MSG, QUIT, CLEAR, SUCCESS, ERROR
+from constants import QUIT, CLEAR, SUCCESS
 from zmq import Socket
+import importlib
+import sys
 import zmq
 import time
 
-def do_action(driver: WebDriver, s: Socket, factory: ConversationFactory):
+def do_action(driver: WebDriver, s: Socket, factory: conversations.factory.ConversationFactory):
     message = s.recv()
     msg_str = message.decode("utf-8")
     print(f"Received request: {message}")
@@ -44,13 +46,24 @@ option.add_experimental_option("prefs", {"profile.default_content_setting_values
 # option.set_capability("browserVersion", "99")
 browser = login(base_url, create_local(driver_options=option))
 
-context = zmq.Context()
-socket = context.socket(zmq.REP)
-socket.bind("tcp://100.90.226.33:5555")
-
 while True:
-    do_action(browser, socket, ConversationFactory(json_service, base_url))
-    time.sleep(2)
+    input("press any key")
+    for module in list(sys.modules.values()):
+            if "conversations" in module.__name__:
+                importlib.reload(module)
+    f = conversations.factory.ConversationFactory(json_service, base_url)
+    chats = f.get_open_conversations(browser)
+    for chat in chats:
+        print(chat.displayed_name)
+        chat.save()
+
+# context = zmq.Context()
+# socket = context.socket(zmq.REP)
+# socket.bind("tcp://100.90.226.33:5555")
+
+# while True:
+#     do_action(browser, socket, ConversationFactory(json_service, base_url))
+#     time.sleep(2)
 
     
 

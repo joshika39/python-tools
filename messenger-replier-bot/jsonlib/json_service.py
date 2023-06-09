@@ -10,7 +10,7 @@ class JsonService():
         json_data = open(self._json_path, 'r').read()
         self._data = json.loads(json_data)  # type:dict
 
-    def read(self, key: str) -> dict | list | str | int:
+    def read(self, key: str):
         if '/' in key:
             return self.read_subkey(key.split('/'), self._data)
         else:

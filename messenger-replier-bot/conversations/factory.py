@@ -2,6 +2,23 @@ from conversations.imports import *
 from conversations.conversation import Conversation
 from conversations.group import Group
 from conversations.person import Person
+from constants import CONTENT_NOT_FOUND
+
+
+def chat_is_profile(driver: WebDriver, chat_id: str) -> bool:
+        driver.execute_script("window.open('');")
+        driver.switch_to.window(driver.window_handles[1])
+        driver.get(f'https://www.facebook.com/{chat_id}')
+        results = search_elements_by_class(driver, CONTENT_NOT_FOUND)
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+        if len(results) == 0:
+            return True
+        
+        return False
+
+
+
 
 class ConversationFactory():
     def __init__(self, service: JsonService, fallback_url: str) -> None:
@@ -11,22 +28,56 @@ class ConversationFactory():
 
     def create_conversation(self, driver: WebDriver, c_id: str) -> Conversation:
         conversation = self.service.read(f"conversations/{c_id}")
-        is_open = False
-        if "keep_open" in conversation.keys():
-            is_open = conversation["keep_open"]
         result = None #type: Conversation
         match conversation["type"]:
             case "group":
-                result = Group(self.service, driver, self.fallback_url, is_open, c_id)
+                result = Group(self.service, driver, self.fallback_url, c_id)
             case "person":
-                result = Person(self.service, driver, self.fallback_url, is_open, c_id)
+                result = Person(self.service, driver, self.fallback_url, c_id)
         return result
-
+    
     def create_conversations(self, driver: WebDriver) -> list[Conversation]:
         return_list = []  #type: list[Conversation]
         for conversation_id in self.conversations:
-            return_list.append(self.create_conversation(driver, conversation_id))
-                    
+            temp = self.create_conversation(driver, conversation_id)
+            if temp.is_open:
+                return_list.append(temp)
+        return return_list
+    
+    def create_conversations_from_list(self, driver: WebDriver, ids: list[str]) -> list[Conversation]:
+        return_list = []  #type: list[Conversation]
+        for conversation_id in ids:
+            result = None  #type: Conversation
+            if conversation_id not in self.conversations:
+                if chat_is_profile(conversation_id):
+                    result = Person(self.service, driver, self.fallback_url, conversation_id)
+                else:
+                    result = Group(self.service, driver, self.fallback_url, conversation_id)
+            else:
+                result = self.create_conversation(driver, conversation_id)
+            return_list.append(result)
+        return return_list
+    
+    def get_open_conversations(self, driver: WebDriver) -> list[Conversation]:
+        return_list = []  #type: list[Conversation]
+
+        res = search_elements_by_xpath(driver, ["a", "role", "link"])
+        ids = []
+        for r in res:
+            s, c_id = get_id_from_link(r)
+            if s:
+                ids.append(c_id)
+        
+        for conversation_id in ids:
+            result = None  #type: Conversation
+            if conversation_id not in self.conversations:
+                if chat_is_profile(conversation_id):
+                    result = Person(self.service, driver, self.fallback_url, conversation_id)
+                else:
+                    result = Group(self.service, driver, self.fallback_url, conversation_id)
+            else:
+                result = self.create_conversation(driver, conversation_id)
+            return_list.append(result)
         return return_list
     
     def create_user(self, driver: WebDriver, id: str) -> Conversation:
