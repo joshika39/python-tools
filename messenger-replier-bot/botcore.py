@@ -5,32 +5,14 @@ from selenium_lib import login, connect_to_container, create_local
 from selenium.webdriver.chrome.webdriver import WebDriver
 import conversations.factory
 import os
-from constants import QUIT, CLEAR, SUCCESS
 from zmq import Socket
 import importlib
 from response import Response
+from botaction import BotAction
 import sys
 import zmq
 import time
-
-def do_action(driver: WebDriver, s: Socket, factory: conversations.factory.ConversationFactory):
-    message = s.recv_pyobj()
-    msg_str = message.decode("utf-8")
-    print(f"Received request: {message}")
-    if message == CLEAR:
-        os.system('cls')
-        r = Response()
-        r.set_response("Cleared")
-        s.send_pyobj(r)
-    elif message == QUIT:
-        driver.quit()
-        s.send(SUCCESS)
-        exit(0)
-    elif "send-" in msg_str:
-        c_id = msg_str.replace("send-", "")
-        person = factory.create_conversation(driver, c_id)
-        person.reply(["Szia Csenge, ", "", "Nagyon szeretlek!"])
-        s.send(SUCCESS)
+import pickle
 
 users_path = os.path.join(curr_dir(), 'users.json')
 
@@ -47,7 +29,7 @@ option.add_argument("start-maximized")
 option.add_argument("--disable-extensions")
 option.add_experimental_option("prefs", {"profile.default_content_setting_values.notifications": 2})
 # option.set_capability("browserVersion", "99")
-browser = login(base_url, create_local(driver_options=option))
+# browser = login(base_url, create_local(driver_options=option))
 
 # while True:
 #     input("press any key")
@@ -62,12 +44,13 @@ browser = login(base_url, create_local(driver_options=option))
 
 context = zmq.Context()
 socket = context.socket(zmq.REP)
-socket.bind("tcp://100.90.226.33:5555")
-
-while True:
-    do_action(browser, socket, conversations.factory.ConversationFactory(json_service, base_url))
-    time.sleep(2)
-
+socket.bind("tcp://*:5555")
+action = None
+while action is None or not action.exit_after:
+    action = socket.recv_pyobj()  #type: BotAction
+    print(f"Action {action.name} arrived. Starting execution...")
+    action.do_action()
+    socket.send_pyobj(Response(True, "OK"))
     
 
 # conversations = factory.create_conversations(None)

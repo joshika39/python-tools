@@ -1,9 +1,4 @@
 class Response():
-	success = False
-
-	def __init__():
-		pass
-
-	def set_response(self, response):
-		self.success = True
+	def __init__(self, succeeded: bool, response):
+		self.success = succeeded
 		self.response = response

@@ -3,6 +3,8 @@ from selection_picker_joshika39 import MenuWrapper, FunctionItem, SingleMenu
 from constants import CLEAR, QUIT
 from jsonlib.json_service import JsonService
 from base import curr_dir
+from botaction import BotAction
+from response import Response
 import os
 
 def send_msg():
@@ -31,14 +33,24 @@ def exit_server():
     print(message)
     exit(0)
 
+def test():
+    def print_test(*args):
+        print(f"Test message, with arguments: {args[0]} + {args[1]} = {args[0] + args[1]}")
+    
+    action = BotAction("Test action", print_test)
+    socket.send_pyobj(action)
+    resp = socket.recv_pyobj()  #type: Response
+    print(resp.response)
+
 
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
-socket.connect("tcp://100.90.226.33:5555")
+socket.connect("tcp://localhost:5555")
 
 while True:
     MenuWrapper("Select a task:", [
         FunctionItem("Send message", send_msg),
         FunctionItem("Clear the logs", clear_logs),
-        FunctionItem("Quit", exit_server)
+        FunctionItem("Quit", exit_server),
+        FunctionItem("Test Method", exit_server)
     ]).show()
