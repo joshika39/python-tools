@@ -6,5 +6,6 @@ class BotAction():
 		self.action = action
 		self.exit_after = exit_after
 
-	def do_action(self, *args,):
-		self.action(args)
+	def do_action(self, *args):
+		print(f"Given args: {len(args)} ({args})")
+		self.action(list(args))

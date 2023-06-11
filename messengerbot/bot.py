@@ -1,10 +1,11 @@
 import zmq
 from selection_picker_joshika39 import MenuWrapper, FunctionItem, SingleMenu
-from constants import CLEAR, QUIT
+from botlib.constants import CLEAR, QUIT
 from jsonlib.json_service import JsonService
-from base import curr_dir
-from botaction import BotAction
-from response import Response
+from botlib.base import curr_dir
+from botlib.botaction import BotAction
+from botlib.response import Response
+from dill import dumps
 import os
 
 def send_msg():
@@ -28,17 +29,18 @@ def clear_logs():
     print(message)
 
 def exit_server():
-    socket.send(QUIT)
-    message = socket.recv()
-    print(message)
+    # socket.send(QUIT)
+    # message = socket.recv()
+    # print(message)
     exit(0)
 
 def test():
-    def print_test(*args):
-        print(f"Test message, with arguments: {args[0]} + {args[1]} = {args[0] + args[1]}")
+    def print_test(l: list):
+        print(f"Test message, with arguments: {len(l)} {l}")
+        # print(f"Test message, with arguments: {args[0]} + {args[1]} = {args[0] + args[1]}")
     
     action = BotAction("Test action", print_test)
-    socket.send_pyobj(action)
+    socket.send(dumps(action))
     resp = socket.recv_pyobj()  #type: Response
     print(resp.response)
 
@@ -48,9 +50,12 @@ socket = context.socket(zmq.REQ)
 socket.connect("tcp://localhost:5555")
 
 while True:
-    MenuWrapper("Select a task:", [
-        FunctionItem("Send message", send_msg),
-        FunctionItem("Clear the logs", clear_logs),
-        FunctionItem("Quit", exit_server),
-        FunctionItem("Test Method", exit_server)
-    ]).show()
+    input("Stopped")
+    test()
+    # MenuWrapper("Select a task:", [
+    #     FunctionItem("Send message", send_msg),
+    #     FunctionItem("Clear the logs", clear_logs),
+    #     FunctionItem("Quit", exit_server),
+    #     FunctionItem("Test Method", test)
+    # ]).show()
+    
