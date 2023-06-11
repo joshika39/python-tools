@@ -8,17 +8,20 @@ import os
 from constants import QUIT, CLEAR, SUCCESS
 from zmq import Socket
 import importlib
+from response import Response
 import sys
 import zmq
 import time
 
 def do_action(driver: WebDriver, s: Socket, factory: conversations.factory.ConversationFactory):
-    message = s.recv()
+    message = s.recv_pyobj()
     msg_str = message.decode("utf-8")
     print(f"Received request: {message}")
     if message == CLEAR:
         os.system('cls')
-        s.send(SUCCESS)
+        r = Response()
+        r.set_response("Cleared")
+        s.send_pyobj(r)
     elif message == QUIT:
         driver.quit()
         s.send(SUCCESS)
@@ -46,24 +49,24 @@ option.add_experimental_option("prefs", {"profile.default_content_setting_values
 # option.set_capability("browserVersion", "99")
 browser = login(base_url, create_local(driver_options=option))
 
-while True:
-    input("press any key")
-    for module in list(sys.modules.values()):
-            if "conversations" in module.__name__:
-                importlib.reload(module)
-    f = conversations.factory.ConversationFactory(json_service, base_url)
-    chats = f.get_open_conversations(browser)
-    for chat in chats:
-        print(chat.display_str())
-        chat.save()
-
-# context = zmq.Context()
-# socket = context.socket(zmq.REP)
-# socket.bind("tcp://100.90.226.33:5555")
-
 # while True:
-#     do_action(browser, socket, ConversationFactory(json_service, base_url))
-#     time.sleep(2)
+#     input("press any key")
+#     for module in list(sys.modules.values()):
+#             if "conversations" in module.__name__:
+#                 importlib.reload(module)
+#     f = conversations.factory.ConversationFactory(json_service, base_url)
+#     chats = f.get_open_conversations(browser)
+#     for chat in chats:
+#         print(chat.display_str())
+#         chat.save()
+
+context = zmq.Context()
+socket = context.socket(zmq.REP)
+socket.bind("tcp://100.90.226.33:5555")
+
+while True:
+    do_action(browser, socket, conversations.factory.ConversationFactory(json_service, base_url))
+    time.sleep(2)
 
     
 
