@@ -4,6 +4,7 @@ import time
 
 class Ventillator():
     def __init__(self, sender_addr: str, sink_addr: str) -> None:
+        print(f"Creating ventillator ({sender_addr}) with the sink ({sink_addr})")
         context = zmq.Context()
         
         self.sender = context.socket(zmq.PUSH)
@@ -18,7 +19,7 @@ class Ventillator():
         print("Sending tasks to workers...")
 
         # The first message is "0" and signals start of batch
-        self.sink_socket.send(b'0')
+        self.sink.send(b'0')
 
         # Initialize random number generator
         random.seed()
