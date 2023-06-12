@@ -3,13 +3,10 @@ import time
 import zmq
 
 class Sink():
-    def __init__(self, addr="tcp://*:5558") -> None:
-        pass
-        self.c = zmq.Context()
-
-        # Socket to receive messages on
-        self.receiver = self.c.socket(zmq.PULL)
-        self.receiver.bind(addr)
+    def __init__(self, sink_addr: str) -> None:
+        context = zmq.Context()
+        self.receiver = context.socket(zmq.PULL)
+        self.receiver.bind(sink_addr)
 
     def start(self):
         # Wait for start of batch

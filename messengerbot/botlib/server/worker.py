@@ -2,27 +2,29 @@ import sys
 import time
 import zmq
 
+class Worker():
+    def __init__(self, pull_addr: str, push_addr: str) -> None:
+        context = zmq.Context()
+        self.receiver = context.socket(zmq.PULL)
+        self.receiver.connect(pull_addr)
 
-context = zmq.Context()
+        # Socket to send messages to
+        self.sender = context.socket(zmq.PUSH)
+        self.sender.connect(push_addr)
 
-# Socket to receive messages on
-receiver = context.socket(zmq.PULL)
-receiver.connect("tcp://localhost:5557")
 
-# Socket to send messages to
-sender = context.socket(zmq.PUSH)
-sender.connect("tcp://localhost:5558")
+    def start(self):
+        # Process tasks forever
+        while True:
+            s = self.receiver.recv()
 
-# Process tasks forever
-while True:
-    s = receiver.recv()
+            # Simple progress indicator for the viewer
+            sys.stdout.write('.')
+            sys.stdout.flush()
 
-    # Simple progress indicator for the viewer
-    sys.stdout.write('.')
-    sys.stdout.flush()
+            # Do the work
+            time.sleep(int(s)*0.001)
 
-    # Do the work
-    time.sleep(int(s)*0.001)
+            # Send results to sink
+            self.sender.send(b'')
 
-    # Send results to sink
-    sender.send(b'')
