@@ -5,6 +5,7 @@ import json
 class JsonService():
     def __init__(self, json_path: str) -> None:
         if not os.path.exists(json_path):
+            print(f"The given json file does not exists! ({json_path})")
             exit(1)
         self._json_path = json_path
         json_data = open(self._json_path, 'r').read()
