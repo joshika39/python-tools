@@ -75,6 +75,7 @@ class ConversationFactory():
                     result = Group(self.service, driver, self.fallback_url, conversation_id)
             else:
                 result = self.create_conversation(driver, conversation_id)
+            result.save()
             return_list.append(result)
         return return_list
     

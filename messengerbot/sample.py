@@ -6,7 +6,7 @@ from botlib.base import proj_root
 from botlib.selenium_lib import login, create_local
 import conversations.factory
 import sys
-
+import time
 smaple_msg = [
      "Hello my friend,",
      "",
@@ -33,14 +33,11 @@ option.add_argument("--disable-extensions")
 option.add_experimental_option("prefs", {"profile.default_content_setting_values.notifications": 2})
 # option.set_capability("browserVersion", "99")
 
-testers = JsonService(os.path.join(proj_root(), 'lists.json')).read("beta_testers")
-
-print(testers)
 
 browser = login(base_url, create_local(driver_options=option))
 
 while True:
-    input("press any key")
+    testers = JsonService(os.path.join(proj_root(), 'lists.json')).read("beta_testers")
     for module in list(sys.modules.values()):
             if "conversations" in module.__name__:
                 importlib.reload(module)
@@ -50,3 +47,4 @@ while True:
         print(chat.display_str())
         if chat.unread and chat.id in testers:
              chat.reply(smaple_msg)
+    time.sleep(2)
