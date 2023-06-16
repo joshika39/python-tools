@@ -2,7 +2,6 @@ from pathlib import Path
 import os
 
 
-
 def curr_dir() -> str:
 	return os.path.dirname(os.path.realpath(__file__))
 

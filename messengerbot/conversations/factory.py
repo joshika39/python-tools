@@ -2,7 +2,7 @@ from conversations.imports import *
 from conversations.conversation import Conversation
 from conversations.group import Group
 from conversations.person import Person
-from constants import CONTENT_NOT_FOUND
+from botlib.constants import CONTENT_NOT_FOUND
 
 
 def chat_is_profile(driver: WebDriver, chat_id: str) -> bool:
@@ -16,8 +16,6 @@ def chat_is_profile(driver: WebDriver, chat_id: str) -> bool:
             return True
         
         return False
-
-
 
 
 class ConversationFactory():

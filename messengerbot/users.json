@@ -1,1 +1,208 @@
-{"people": {"csenge": "100006367207301", "hanna": "100019317438894", "joshua": "100012409636478", "beni": "100015000309137"}, "conversations": {"2843874362352112": {"type": "group", "last_message": null, "keep_open": false, "name": "Kreastol"}, "100002207628601": {"type": "person", "last_message": null, "keep_open": false, "name": "Julianna \u00c9s L\u00e1szl\u00f3 Heged\u0171s"}, "100022731858089": {"type": "person", "last_message": null, "keep_open": false, "displayed_name": "Person: 100022731858089 (not found)"}, "100009876018162": {"type": "person", "last_message": null, "keep_open": false, "name": "Aqdas Mujahid"}, "100027540483260": {"type": "person", "last_message": null, "keep_open": false, "displayed_name": "Person: 100027540483260 (not found)"}, "100009191056907": {"type": "person", "last_message": null, "keep_open": false, "name": "Kiss Benedek M\u00e1t\u00e9"}, "100027406035879": {"type": "person", "last_message": null, "keep_open": false, "name": "Baldy Archie"}, "100012409636478": {"type": "person", "last_message": null, "keep_open": false, "displayed_name": "Person: 100012409636478 (not found)"}, "100019643763104": {"type": "person", "last_message": null, "keep_open": false, "name": "Martin Bal\u00e1zs"}, "100015000309137": {"type": "person", "last_message": null, "keep_open": false, "name": "Benj\u00e1min Heged\u0171s"}, "100006367207301": {"type": "person", "last_message": null, "keep_open": false, "name": "!C:?46DD"}, "100019317438894": {"type": "person", "last_message": null, "keep_open": false, "name": "Hanna Rancz-Gy\u00e1rf\u00e1s"}, "100004499802566": {"type": "person", "last_message": null, "keep_open": false, "displayed_name": "Person: 100004499802566 (not found)"}, "4577680678951608": {"type": "group", "last_message": null, "keep_open": false, "name": "Logiscool \u00dajbuda Backstage Chat"}, "5193071507485660": {"type": "group", "last_message": null, "keep_open": false, "name": "11-es Csoport"}, "6767405343275132": {"type": "group", "last_message": null, "keep_open": false, "name": "Isz"}, "100035537291906": {"type": "person", "last_message": null, "keep_open": false, "name": "Nataniel Heged\u0171s"}, "100073330414542": {"type": "person", "last_message": null, "keep_open": false, "name": "Mehdi Moqadam"}, "100035426440135": {"type": "person", "last_message": null, "keep_open": false, "name": "Koordin\u00e1tor LscBuda"}, "615875012": {"type": "person", "last_message": null, "keep_open": false, "name": "Sarah Conway"}, "100000721729104": {"type": "person", "last_message": null, "keep_open": false, "name": "Vadkerti S\u00e1ra"}, "100010411446549": {"type": "person", "last_message": null, "keep_open": false, "name": "Kolos Luk\u00e1csi"}, "100012701191220": {"type": "person", "last_message": null, "keep_open": false, "name": "Joel D. Nagy"}, "100004686633375": {"type": "person", "last_message": null, "keep_open": false, "name": "Spirk Marcell"}, "100040380650913": {"type": "person", "last_message": null, "keep_open": false, "name": "Andor B\u00e1l\u00f3"}, "100004891753924": {"type": "person", "last_message": null, "keep_open": false, "name": "Krist\u00f3f Bal\u00e1zsi"}, "100004896753873": {"type": "person", "last_message": null, "keep_open": false, "name": "Matthew Szemes"}, "100010619140170": {"type": "person", "last_message": null, "keep_open": false, "name": "\u00c1gnes Kir\u00e1ly"}, "100080660873589": {"type": "person", "last_message": null, "keep_open": false, "name": "Beksultan Kadyrkulov"}, "100005869061279": {"type": "person", "last_message": null, "keep_open": false, "name": "Abdulbasit Afzal"}, "6849937095019849": {"type": "group", "last_message": null, "keep_open": false, "name": "Test"}, "100084319735229": {"type": "person", "last_message": null, "keep_open": false, "name": "Assylbek Altynbekuly"}, "100007305612542": {"type": "person", "last_message": null, "keep_open": false, "name": "Ayoub Alimi"}}, "whitelist": ["100019317438894", "100006367207301"], "beta_testers": ["100035537291906", "100012409636478", "100015000309137"], "targets": []}
+{
+	"people": {
+		"csenge": "100006367207301",
+		"hanna": "100019317438894",
+		"joshua": "100012409636478",
+		"beni": "100015000309137"
+	},
+	"conversations": {
+		"2843874362352112": {
+			"type": "group",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Kreastol"
+		},
+		"100002207628601": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Julianna \u00c9s L\u00e1szl\u00f3 Heged\u0171s"
+		},
+		"100022731858089": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"displayed_name": "Person: 100022731858089 (not found)"
+		},
+		"100009876018162": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Aqdas Mujahid"
+		},
+		"100027540483260": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"displayed_name": "Person: 100027540483260 (not found)"
+		},
+		"100009191056907": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Kiss Benedek M\u00e1t\u00e9"
+		},
+		"100027406035879": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Baldy Archie"
+		},
+		"100012409636478": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"displayed_name": "Person: 100012409636478 (not found)"
+		},
+		"100019643763104": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Martin Bal\u00e1zs"
+		},
+		"100015000309137": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Benj\u00e1min Heged\u0171s"
+		},
+		"100006367207301": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "!C:?46DD"
+		},
+		"100019317438894": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Hanna Rancz-Gy\u00e1rf\u00e1s"
+		},
+		"100004499802566": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"displayed_name": "Person: 100004499802566 (not found)"
+		},
+		"4577680678951608": {
+			"type": "group",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Logiscool \u00dajbuda Backstage Chat"
+		},
+		"5193071507485660": {
+			"type": "group",
+			"last_message": null,
+			"keep_open": false,
+			"name": "11-es Csoport"
+		},
+		"6767405343275132": {
+			"type": "group",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Isz"
+		},
+		"100035537291906": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Nataniel Heged\u0171s"
+		},
+		"100073330414542": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Mehdi Moqadam"
+		},
+		"100035426440135": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Koordin\u00e1tor LscBuda"
+		},
+		"615875012": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Sarah Conway"
+		},
+		"100000721729104": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Vadkerti S\u00e1ra"
+		},
+		"100010411446549": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Kolos Luk\u00e1csi"
+		},
+		"100012701191220": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Joel D. Nagy"
+		},
+		"100004686633375": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Spirk Marcell"
+		},
+		"100040380650913": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Andor B\u00e1l\u00f3"
+		},
+		"100004891753924": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Krist\u00f3f Bal\u00e1zsi"
+		},
+		"100004896753873": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Matthew Szemes"
+		},
+		"100010619140170": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "\u00c1gnes Kir\u00e1ly"
+		},
+		"100080660873589": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Beksultan Kadyrkulov"
+		},
+		"100005869061279": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Abdulbasit Afzal"
+		},
+		"6849937095019849": {
+			"type": "group",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Test"
+		},
+		"100084319735229": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Assylbek Altynbekuly"
+		},
+		"100007305612542": {
+			"type": "person",
+			"last_message": null,
+			"keep_open": false,
+			"name": "Ayoub Alimi"
+		}
+	}
+}

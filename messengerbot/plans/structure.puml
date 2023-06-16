@@ -1,0 +1,12 @@
+@startuml Classes
+
+abstract Conversation{
+	- id: string
+	- full_url: string
+	- home_url: string
+	# service: JsonService
+	# driver: WebDriver
+	# last_message: date
+}
+
+@enduml

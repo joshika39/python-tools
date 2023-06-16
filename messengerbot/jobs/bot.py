@@ -41,21 +41,19 @@ def test():
     
     action = BotAction("Test action", print_test)
     socket.send(dumps(action))
-    resp = socket.recv_pyobj()  #type: Response
-    print(resp.response)
+    resp = socket.recv()
+    print(resp)
 
 
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
 socket.connect("tcp://localhost:5555")
 
-while True:
-    input("Stopped")
-    test()
-    # MenuWrapper("Select a task:", [
-    #     FunctionItem("Send message", send_msg),
-    #     FunctionItem("Clear the logs", clear_logs),
-    #     FunctionItem("Quit", exit_server),
-    #     FunctionItem("Test Method", test)
-    # ]).show()
+
+MenuWrapper("Select a task:", [
+    FunctionItem("Send message", send_msg),
+    FunctionItem("Clear the logs", clear_logs),
+    FunctionItem("Quit", exit_server),
+    FunctionItem("Test Method", test)
+]).show()
     
