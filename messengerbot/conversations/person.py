@@ -29,6 +29,10 @@ class Person(Conversation):
         
     def archive(self):
         menu = super().archive()
+        if not menu:
+            print(f"ERROR: While archiving: {super().display_str()}")
+            return
+        
         match len(menu):
             case 3:
                 menu[1].click()
@@ -36,6 +40,7 @@ class Person(Conversation):
             case 9:
                 menu[6].click()
                 return True
+            
         return False
                 
     def json_format(self) -> dict:

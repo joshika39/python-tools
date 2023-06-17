@@ -123,6 +123,7 @@ class Conversation():
         except Exception as e:
             print(f"Could not open menu: {e}")
 
+        print(f"Could not open menu for unknown reason")
         return False
 
     def display_str(self) -> str:
