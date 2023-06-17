@@ -79,7 +79,7 @@ class Conversation():
 
     def verify_action(self):
         print("Verifying reply.")
-        time.sleep(2)
+        # time.sleep(2)
         self._driver.implicitly_wait(3)
     
     def reply(self, messages: list[str]) -> bool:
@@ -108,6 +108,8 @@ class Conversation():
         return sent
 
     def archive(self) -> list[WebElement] | bool:
+        if self._driver.current_url != self.home_url:
+            self._driver.get(self.home_url)
         try:
             hover = ActionChains(self._driver).move_to_element(self.element)
             hover.perform()
@@ -135,3 +137,6 @@ class Conversation():
     def save(self):
         json_obj = self.json_format()
         self.service.write(f"conversations/{self.id}", json_obj)
+
+    def test(self):
+        pass

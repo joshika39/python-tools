@@ -7,15 +7,6 @@ from botlib.selenium_lib import login, create_local
 import conversations.factory
 import sys
 import time
-smaple_msg = [
-    "Hello my friend,",
-    "",
-    "The reason that you are getting this message is that you got enrolled to Joshua's beta tester program",
-    "",
-    "He is creating a replier and messenger manager bot. Thak you for sending a message to him.",
-    "",
-    "God bless you!"
-]
 
 users_path = os.path.join(proj_root(), 'users.json')
 
@@ -47,8 +38,10 @@ while True:
     chats = f.get_open_conversations(browser)
     for chat in chats:
         print(chat.display_str())
-        if chat.unread and chat.id in testers:
-            chat.reply(smaple_msg)
-            chat.archive()
+
+    for c in chats:
+        if c.unread and c.id in testers:
+            c.test()
+
     print("Refresh in 3 seconds")
     time.sleep(3)

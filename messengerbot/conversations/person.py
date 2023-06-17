@@ -2,6 +2,14 @@ from conversations.imports import *
 from conversations.conversation import Conversation
 from botlib.constants import CHAT_NAME
 
+smaple_msg = [
+    "Hello my friend,",
+    "",
+    "The reason that you are getting this message is that you got enrolled to Joshua's beta tester program",
+    "",
+    "He is creating a replier and messenger manager bot. Thak you for sending a message to him."
+]
+
 class Person(Conversation):
     def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
         super().__init__(service, driver, home_url, id)
@@ -45,4 +53,9 @@ class Person(Conversation):
                 
     def json_format(self) -> dict:
         return {"type" : "person", "last_message" : self._last_message, "keep_open" : self.keep_open, "name": self.name}
+    
+    def test(self):
+        self.reply(smaple_msg)
+        self.archive()
+        return super().test()
     
