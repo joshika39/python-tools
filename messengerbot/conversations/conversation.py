@@ -3,7 +3,7 @@ from conversations.imports import *
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 from botlib.constants import CHATS, CHAT_LINK, READ_MSG, CONTEXT_MENU, MENU_ITEMS, CHAT_NAME, UCHAT_NAME
-
+import time
 class Conversation():
     def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
         self.service = service
@@ -74,6 +74,8 @@ class Conversation():
         pass
 
     def verify_action(self):
+        print("Verifying reply.")
+        time.sleep(2)
         self._driver.implicitly_wait(3)
     
     def reply(self, messages: list[str]) -> bool:

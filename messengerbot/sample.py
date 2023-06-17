@@ -47,4 +47,5 @@ while True:
         print(chat.display_str())
         if chat.unread and chat.id in testers:
              chat.reply(smaple_msg)
-    time.sleep(2)
+    print("Refresh in 3 seconds")
+    time.sleep(3)
