@@ -13,6 +13,9 @@ class Conversation():
         self.full_url = f'https://www.facebook.com/messages/t/{self.id}'
         self.__init_details()
 
+    def __str__(self) -> str:
+        return self.display_str()
+
     def refresh_element(self):
         chats = search_elements_by_class(self._driver, CHATS)
         i = 0
@@ -49,7 +52,8 @@ class Conversation():
             self.element = None
 
     def get_safe_data(self, key: str) -> Any | None:
-        return self.service.read(f"{id}/{key}")
+        res = self.service.read(f"conversations/{self.id}/{key}")
+        return res
         
     def __init_details(self):
         self._last_message = self.get_safe_data("last_message")

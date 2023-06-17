@@ -37,9 +37,7 @@ class ConversationFactory():
     def create_conversations(self, driver: WebDriver) -> list[Conversation]:
         return_list = []  #type: list[Conversation]
         for conversation_id in self.conversations:
-            temp = self.create_conversation(driver, conversation_id)
-            if temp.is_open:
-                return_list.append(temp)
+            return_list.append(self.create_conversation(driver, conversation_id))
         return return_list
     
     def create_conversations_from_list(self, driver: WebDriver, ids: list[str]) -> list[Conversation]:

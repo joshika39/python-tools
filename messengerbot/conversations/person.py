@@ -6,6 +6,9 @@ class Person(Conversation):
     def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
         super().__init__(service, driver, home_url, id)
     
+    def __str__(self) -> str:
+        return super().display_str()
+    
     def reply(self, messages: list[str]) -> bool:
         curr_time = date.today()
         if self._last_message is not None:
