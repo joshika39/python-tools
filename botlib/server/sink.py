@@ -21,7 +21,7 @@ class Sink():
             if task_nbr % 10 == 0:
                 sys.stdout.write(':')
             else:
-                sys.stdout.write('.')
+                sys.stdout.write('')
             sys.stdout.flush()
 
         # Calculate and report duration of batch

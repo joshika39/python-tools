@@ -1,8 +1,10 @@
-from conversations.imports import *
 from conversations.conversation import Conversation
 from conversations.group import Group
 from conversations.person import Person
 from botlib.constants import CONTENT_NOT_FOUND
+from selenium.webdriver.chrome.webdriver import WebDriver
+from botlib.selenium_lib import search_elements_by_class, search_elements_by_xpath, get_id_from_link
+from jsonlib.json_service import JsonService
 
 
 def chat_is_profile(driver: WebDriver, chat_id: str) -> bool:
@@ -63,7 +65,8 @@ class ConversationFactory():
             s, c_id = get_id_from_link(r)
             if s:
                 ids.append(c_id)
-        
+        ids = ids[0:10]
+
         for conversation_id in ids:
             result = None  #type: Conversation
             if conversation_id not in self.conversations:

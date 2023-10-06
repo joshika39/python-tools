@@ -1,18 +1,26 @@
 from typing import Any
-from conversations.imports import *
+
+from selenium.common import StaleElementReferenceException
+from selenium.webdriver import Keys
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
-from botlib.constants import CHATS, CHAT_LINK, READ_MSG, CONTEXT_MENU, MENU_ITEMS, CHAT_NAME, UCHAT_NAME
-import time
+from botlib.constants import CHATS, CHAT_LINK, READ_MSG, CONTEXT_MENU, MENU_ITEMS, CHAT_NAME, UCHAT_NAME, MESSAGE, \
+    MSG_BOX
+from botlib.selenium_lib import *
+from jsonlib.json_service import JsonService
+
+
 class Conversation():
     def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
+        self.unread = False
         self.service = service
         self.id = id
         self.home_url = home_url 
         self._driver = driver
         self.full_url = f'https://www.facebook.com/messages/t/{self.id}'
         self.__init_details()
-
+        self._last_message = None
     def __str__(self) -> str:
         return self.display_str()
 

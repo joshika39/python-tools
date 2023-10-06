@@ -1,6 +1,9 @@
-from conversations.imports import *
+from datetime import date, datetime
+
+from selenium.webdriver.chrome.webdriver import WebDriver
+
 from conversations.conversation import Conversation
-from botlib.constants import CHAT_NAME
+from jsonlib.json_service import JsonService
 
 smaple_msg = [
     "Hello my friend,",
@@ -10,10 +13,11 @@ smaple_msg = [
     "He is creating a replier and messenger manager bot. Thak you for sending a message to him."
 ]
 
-class Group(Conversation):
+
+class Person(Conversation):
     def __init__(self, service: JsonService, driver: WebDriver, home_url: str, id: str) -> None:
         super().__init__(service, driver, home_url, id)
-
+    
     def __str__(self) -> str:
         return super().display_str()
     
@@ -22,27 +26,40 @@ class Group(Conversation):
         if self._last_message is not None:
             last_time = datetime.strptime(self._last_message, "%Y-%m-%d")
             if curr_time == last_time:
-                messages['Ma mar kaptatok uzenetet', ' ', ' ', 'Peace out ( ´ ▽ ` )ﾉ']
+                messages = ['Ma mar kaptal uzenetet', ' ', ' ', 'Peace out ( ´ ▽ ` )ﾉ']
         else:
             self._last_message = curr_time
-        return super().reply(messages)
+        
+        return super().reply(messages) 
     
     def display_str(self) -> str:
         name = super().display_str()
         if self.unread:
-            return f"👥 {name} 🔔"
+            return f"👤 {name} 🔔"
         else:
-            return f"👥 {name}"
-    
+            return f"👤 {name}"
+        
     def archive(self):
-        menu =  super().__archive()
-        if len(menu) == 8:
-            menu[4].click()
-    
+        menu = super().archive()
+        if not menu:
+            print(f"ERROR: While archiving: {super().display_str()}")
+            return
+        
+        match len(menu):
+            case 3:
+                menu[1].click()
+                return True
+            case 9:
+                menu[6].click()
+                return True
+            
+        return False
+                
     def json_format(self) -> dict:
-        return {"type" : "group", "last_message" : self._last_message, "keep_open" : self.keep_open, "name": self.name}
+        return {"type" : "person", "last_message" : self._last_message, "keep_open" : self.keep_open, "name": self.name}
     
     def test(self):
         self.reply(smaple_msg)
         self.archive()
         return super().test()
+    

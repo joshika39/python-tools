@@ -1,5 +1,4 @@
 from selenium.webdriver.chrome.options import Options
-from jsonlib.json_service import JsonService
 import os
 import importlib
 from botlib.base import proj_root
@@ -7,6 +6,8 @@ from botlib.selenium_lib import login, create_local
 import conversations.factory
 import sys
 import time
+
+from jsonlib.json_service import JsonService
 
 users_path = os.path.join(proj_root(), 'users.json')
 

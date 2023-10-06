@@ -1,5 +1,5 @@
 from json_service import JsonService
-from messengerbot.botlib.base import curr_dir
+from botlib.base import curr_dir
 import os
 
 users_path = os.path.join(curr_dir(), 'test.json')

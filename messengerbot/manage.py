@@ -5,12 +5,12 @@ from conversations.conversation import Conversation
 from conversations.factory import ConversationFactory
 import os
 
-testers_path = os.path.join(proj_root(), 'lists.json')
+testers_path = os.path.join(proj_root(), '../lists.json')
 service = JsonService(testers_path)
 
 
 fact = ConversationFactory(JsonService(os.path.join(
-    proj_root(), 'users.json')), "https://google.com/")
+    proj_root(), '../users.json')), "https://google.com/")
 
 conversations = fact.create_conversations(None)
 
