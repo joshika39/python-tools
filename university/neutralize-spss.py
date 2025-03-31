@@ -20,8 +20,8 @@ def neutralize_data(file: str, overwrite: bool = False):
         content = f.read()
 
     for i in range(1, 10):
-        content = regex_replace_word(content, f"'A{i}'", str(i))
-        content = regex_replace_word(content, f'"A{i}"', str(i))
+        content = content.replace(f"'A{i}'", str(i))
+        content = content.replace(f'"A{i}"', str(i))
 
     if overwrite:
         with open(file, "w") as f:
